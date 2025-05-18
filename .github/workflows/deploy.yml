@@ -1,3 +1,4 @@
+#this is the workflow for deploying the backend and frontend to the EC2 instance
 name: Deploy to EC2
 
 on:
