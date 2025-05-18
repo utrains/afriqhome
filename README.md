@@ -120,3 +120,13 @@ docker-compose up -d
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details. 
+
+#for deployment in the local server
+npm run db:migrate:dev  # Create and apply migrations
+npm run db:seed        # Seed the database
+npm run db:studio      # Open Prisma Studio
+
+#for production
+npm run db:migrate     # Apply migrations
+npm run build         # Build the application
+npm start 

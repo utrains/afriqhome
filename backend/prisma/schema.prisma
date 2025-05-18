@@ -1,0 +1,133 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                      Int       @id @default(autoincrement())
+  firstName               String
+  lastName                String
+  email                   String    @unique
+  password                String
+  phone                   String?
+  role                    UserRole  @default(BUYER)
+  agency_name            String?
+  agency_license         String?
+  agency_address         String?
+  is_verified            Boolean   @default(false)
+  verification_token     String?
+  verification_token_expires DateTime?
+  created_at             DateTime  @default(now())
+  updated_at             DateTime  @updatedAt
+  properties             Property[]
+  documents             Document[]
+  messages              Message[]
+  notifications         Notification[]
+}
+
+model Property {
+  id          String    @id @default(uuid())
+  title       String
+  description String
+  price       Float
+  location    String
+  type        PropertyType
+  status      PropertyStatus @default(AVAILABLE)
+  features    Json?
+  images      String[]
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  documents   Document[]
+  messages    Message[]
+}
+
+model Document {
+  id         String   @id @default(uuid())
+  type       DocumentType
+  url        String
+  status     DocumentStatus @default(PENDING)
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+  propertyId String?
+  property   Property? @relation(fields: [propertyId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  content   String
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  propertyId String
+  property  Property @relation(fields: [propertyId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  type      NotificationType
+  message   String
+  read      Boolean  @default(false)
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum UserRole {
+  ADMIN
+  BUYER
+  SELLER
+  AGENT
+  LEGAL_ADVISOR
+  FINANCIER
+  CONSTRUCTION_MANAGER
+}
+
+enum PropertyType {
+  RESIDENTIAL
+  COMMERCIAL
+  LAND
+  INDUSTRIAL
+}
+
+enum PropertyStatus {
+  AVAILABLE
+  SOLD
+  RENTED
+  PENDING
+}
+
+enum DocumentType {
+  ID
+  TITLE_DEED
+  SURVEY
+  CONTRACT
+  FINANCIAL
+  LEGAL
+  CONSTRUCTION
+}
+
+enum DocumentStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum NotificationType {
+  MESSAGE
+  DOCUMENT
+  PROPERTY
+  SYSTEM
+} 

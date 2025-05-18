@@ -1,34 +1,65 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider, CssBaseline } from '@mui/material';
 import theme from './theme';
-import Layout from './components/Layout';
-import Dashboard from './pages/Dashboard';
-import Properties from './pages/Properties';
-import PropertyDetails from './components/PropertyDetails';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import NotFound from './pages/NotFound';
+import Navbar from './components/Navbar/Navbar';
+import Hero from './components/Hero/Hero';
+import FeaturedListings from './components/FeaturedListings/FeaturedListings';
+import CoreServices from './components/CoreServices/CoreServices';
+import HowItWorks from './components/HowItWorks/HowItWorks';
+import WhyUs from './components/WhyUs/WhyUs';
+import ContactBanner from './components/ContactBanner/ContactBanner';
+import Footer from './components/Footer/Footer';
+import Login from './components/Auth/Login';
+import Register from './components/Auth/Register';
 
-const App: React.FC = () => {
+function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Router>
-        <Layout>
+      <div className="app">
+        <Router>
           <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/properties" element={<Properties />} />
-            <Route path="/property/:id" element={<PropertyDetails />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="*" element={<NotFound />} />
+            <Route
+              path="/"
+              element={
+                <>
+                  <Navbar />
+                  <Hero />
+                  <FeaturedListings />
+                  <CoreServices />
+                  <HowItWorks />
+                  <WhyUs />
+                  <ContactBanner />
+                  <Footer />
+                </>
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                <>
+                  <Navbar />
+                  <Login />
+                  <Footer />
+                </>
+              }
+            />
+            <Route
+              path="/register"
+              element={
+                <>
+                  <Navbar />
+                  <Register />
+                  <Footer />
+                </>
+              }
+            />
           </Routes>
-        </Layout>
-      </Router>
+        </Router>
+      </div>
     </ThemeProvider>
   );
-};
+}
 
-export default App; 
+export default App;
