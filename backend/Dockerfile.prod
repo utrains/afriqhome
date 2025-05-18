@@ -17,7 +17,7 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Install netcat for database connection check
+# Install netcat for database connection chec
 RUN apk add --no-cache netcat-openbsd
 
 COPY --from=builder /app/dist ./dist
