@@ -23,6 +23,12 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/scripts ./scripts
 
+# Debug: List files in /app/prisma and show schema.prisma
+RUN ls -l /app/prisma && cat /app/prisma/schema.prisma
+
+# Debug: Show installed @prisma/client version
+RUN npm list @prisma/client
+
 # Generate Prisma client
 RUN npx prisma generate
 
