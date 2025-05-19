@@ -95,11 +95,11 @@ jobs:
           fi
 
           # Clean up previous Docker artifacts
-          docker ps -aq | xargs -r docker stop
-          docker ps -aq | xargs -r docker rm
-          docker images -aq | xargs -r docker rmi -f
-          docker volume prune -f
-          docker network prune -f
+          sudo docker ps -aq | xargs -r sudo docker stop
+          sudo docker ps -aq | xargs -r sudo docker rm
+          sudo docker images -aq | xargs -r sudo docker rmi -f
+          sudo docker volume prune -f
+          sudo docker network prune -f
 
-          docker-compose -f docker-compose.prod.yml pull
-          docker-compose -f docker-compose.prod.yml up -d 
+          sudo docker-compose -f docker-compose.prod.yml pull
+          sudo docker-compose -f docker-compose.prod.yml up -d 
