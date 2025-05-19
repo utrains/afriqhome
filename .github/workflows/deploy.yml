@@ -61,5 +61,12 @@ jobs:
           echo "DB_USER=${{ secrets.DB_USER }}" > .env
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
           echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+          # Clean up previous Docker artifacts
+          docker ps -aq | xargs -r docker stop
+          docker ps -aq | xargs -r docker rm
+          docker images -aq | xargs -r docker rmi -f
+          docker volume prune -f
+          docker network prune -f
+
           docker-compose -f docker-compose.prod.yml pull
           docker-compose -f docker-compose.prod.yml up -d 
