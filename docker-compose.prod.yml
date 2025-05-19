@@ -23,7 +23,7 @@ services:
       dockerfile: backend/Dockerfile.prod
     environment:
       - NODE_ENV=production
-      - DB_HOST=postgres
+      - DB_HOST=${DB_HOST}
       - DB_PORT=5432
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
