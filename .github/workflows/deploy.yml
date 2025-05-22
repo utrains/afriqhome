@@ -1,4 +1,4 @@
-#this is the workflow for deploying the backend and frontend to the 
+#this is the workflow for deploying the backend and frontend to the ec2
 name: Deploy to EC2
 
 on:
