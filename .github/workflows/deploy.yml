@@ -109,5 +109,13 @@ jobs:
           sudo docker volume prune -f
           sudo docker network prune -f
 
+          # Remove all containers and networks for a clean slate
+          sudo docker-compose -f docker-compose.prod.yml down
+          sudo docker system prune -af
+
+          # Pull latest images (if any)
           sudo docker-compose -f docker-compose.prod.yml pull
-          sudo docker-compose -f docker-compose.prod.yml up -d 
+
+          # Force a fresh build and recreate containers
+          sudo docker-compose -f docker-compose.prod.yml build --no-cache
+          sudo docker-compose -f docker-compose.prod.yml up -d --force-recreate 
