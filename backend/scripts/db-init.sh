@@ -1,4 +1,5 @@
 #!/bin/sh
+# NOTE: This script is not used in production anymore. Migrations are skipped in production for now.
 
 # Wait for PostgreSQL to be ready
 echo "Waiting for PostgreSQL to be ready..."

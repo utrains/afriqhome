@@ -41,4 +41,5 @@ ENV PORT=5000
 EXPOSE 5000
 
 # Use the initialization script as the entry point
-CMD ["./scripts/db-init.sh"] 
+#CMD ["./scripts/db-init.sh"]
+CMD ["npm", "start"] 
