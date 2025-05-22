@@ -57,7 +57,14 @@ jobs:
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
-          cd /home/${{ secrets.EC2_USERNAME }}/afriqhome
+          # Ensure the latest code is present
+          cd /home/${{ secrets.EC2_USERNAME }}
+          if [ ! -d "afriqhome" ]; then
+            git clone https://github.com/utrains/afriqhome.git
+          fi
+          cd afriqhome
+          git fetch --all
+          git reset --hard origin/main
           echo "DB_USER=${{ secrets.DB_USER }}" > .env
           echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
