@@ -106,6 +106,13 @@ jobs:
           echo "Bringing down any existing containers..."
           sudo docker-compose -f docker-compose.prod.yml down
           sudo docker system prune -af
+          echo "Installing AWS CLI if not present..."
+          if ! command -v aws &> /dev/null; then
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+            rm -rf awscliv2.zip aws
+          fi
           export BACKEND_IMAGE=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_BACKEND }}:${{ github.sha }}
           export FRONTEND_IMAGE=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_FRONTEND }}:${{ github.sha }}
           echo "Logging in to ECR..."
