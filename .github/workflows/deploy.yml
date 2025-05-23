@@ -57,14 +57,19 @@ jobs:
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
-          # Ensure the latest code is present
+          set -x
+          echo "Starting deploy script"
           cd /home/${{ secrets.EC2_USERNAME }}
+          echo "In home directory"
           if [ ! -d "afriqhome" ]; then
+            echo "Cloning repository..."
             git clone https://github.com/utrains/afriqhome.git
           fi
           cd afriqhome
+          echo "In afriqhome directory"
           git fetch --all
           git reset --hard origin/main
+          echo "Wrote environment variables to .env"
           echo "DB_USER=${{ secrets.DB_USER }}" > .env
           echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
@@ -76,53 +81,35 @@ jobs:
           echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> .env
           echo "AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }}" >> .env
           echo "DATABASE_URL=postgresql://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@${{ secrets.DB_HOST }}:${{ secrets.DB_PORT || '5432' }}/${{ secrets.DB_NAME }}" >> .env
-          # Install Docker and Docker Compose if not already installed
+          echo "Checking Docker installation..."
           if ! command -v docker &> /dev/null; then
-            # Update system packages
+            echo "Installing Docker..."
             sudo apt update
             sudo apt upgrade -y
-
-            # Install required packages
             sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
-
-            # Add Docker's official GPG key
             curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-
-            # Add Docker repository
             echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-            # Update package index
             sudo apt update
-
-            # Install Docker
             sudo apt install -y docker-ce docker-ce-cli containerd.io
-
-            # Start Docker service
             sudo systemctl start docker
             sudo systemctl enable docker
-
-            # Add ubuntu user to docker group
             sudo usermod -aG docker ubuntu
-
-            # Install Docker Compose
             sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
             sudo chmod +x /usr/local/bin/docker-compose
           fi
-
-          # Clean up previous Docker artifacts
+          echo "Cleaning up previous Docker artifacts..."
           sudo docker ps -aq | xargs -r sudo docker stop
           sudo docker ps -aq | xargs -r sudo docker rm
           sudo docker images -aq | xargs -r sudo docker rmi -f
           sudo docker volume prune -f
           sudo docker network prune -f
-
-          # Remove all containers and networks for a clean slate
+          echo "Bringing down any existing containers..."
           sudo docker-compose -f docker-compose.prod.yml down
           sudo docker system prune -af
-
           export BACKEND_IMAGE=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_BACKEND }}:${{ github.sha }}
           export FRONTEND_IMAGE=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_FRONTEND }}:${{ github.sha }}
-          # Pull latest images (if any)
+          echo "Pulling latest images from ECR..."
           sudo BACKEND_IMAGE=$BACKEND_IMAGE FRONTEND_IMAGE=$FRONTEND_IMAGE docker-compose -f docker-compose.prod.yml pull
-          # Start containers
-          sudo BACKEND_IMAGE=$BACKEND_IMAGE FRONTEND_IMAGE=$FRONTEND_IMAGE docker-compose -f docker-compose.prod.yml up -d --force-recreate 
+          echo "Starting containers..."
+          sudo BACKEND_IMAGE=$BACKEND_IMAGE FRONTEND_IMAGE=$FRONTEND_IMAGE docker-compose -f docker-compose.prod.yml up -d --force-recreate
+          echo "Deployment finished." 
