@@ -47,6 +47,8 @@ services:
       - backend
     networks:
       - app-network
+    ports:
+      - "3000:80"
 
 networks:
   app-network:
