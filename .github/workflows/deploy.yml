@@ -1,4 +1,4 @@
-#this is the workflow for deploying the backend and frontend to the ec2 the cache 
+#this is the workflow for deploying the backend and frontend to the ec2 the 
 name: Deploy to EC2
 
 on:
